@@ -1,4 +1,5 @@
 # block image files
 *.png
 *.html
-
+pages/
+pages
