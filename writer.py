@@ -13,10 +13,11 @@ def atomicWrite(file: str, data, text: bool=True, overwrite: bool=True):
     """
     temp_file = f"temp_{file}"
     with open(temp_file, "w+" if text else "wb+") as f:
-        f.write()
+        f.write(data)
         # ensure all data is on disk
         f.flush()
-        os.fsync(f.fileno)
+        print(f.fileno())
+        os.fsync(f.fileno())
 
         os.replace(temp_file, file)
         # finally, delete tmp_file
