@@ -29,6 +29,8 @@ the file will look like
 import json
 import os
 import datetime
+import shutil
+
 import writer
 
 
@@ -49,6 +51,7 @@ _json_data = json.loads(_file)
 def addPageData(title:str, file:str, number:int, timestamp: str):
     """
     updates information from new page
+    each of the params fits exactly with the generated data file
     """
     # todo, generate and convert datetime
     section = {
@@ -60,12 +63,12 @@ def addPageData(title:str, file:str, number:int, timestamp: str):
 
     # this is tricky, and maybe unatomic
     _json_data["pages"].append(section)
-    ### TODO -- no way to ensure that we don't skip something
+    # ensure we don't write out of sequeunce !!!
     if _json_data["collected-pages"] + 1 != number:
         current = _json_data["collected-pages"]
         raise ValueError(
-            f"attempted to write metadata for page #{number}: {title}"
-            f"but only {current} pages have been written, which means {current-number-1} pages have been missed!"
+            f"attempted to write metadata for page #{number}: \"{title}\" "
+            f"but only {current} pages have been written, which means {number-current-1} pages have been missed!"
         )
     else: 
         _json_data["collected-pages"] += 1
@@ -93,37 +96,51 @@ def lastPage() -> int:
 
 
 if __name__ == "__main__":
-    addPageData(
-        title= "intro",
-        number= 1,
-        file= "foo-1.png",
-        timestamp="2007-04-05T14:30"
-    )
+    # backup file for testing
+    shutil.copy()
+    # next, run our example sequence
+    try:
+        addPageData(
+            title= "intro",
+            number= 1,
+            file= "foo-1.png",
+            timestamp="2007-04-05T14:30"
+        )
 
-    addPageData(
-        title="denounement",
-        number=1,
-        file="foo-2.png",
-        timestamp="2007-04-012T02:45"
-    )
+        addPageData(
+            title="denounement",
+            number=2,
+            file="foo-2.png",
+            timestamp="2007-04-012T02:45"
+        )
 
-    addPageData(
-        title="part 1",
-        number=3,
-        file="foo-3.png",
-        timestamp="2007-04-012T02:45"
-    )
+        addPageData(
+            title="part 1",
+            number=3,
+            file="foo-3.png",
+            timestamp="2007-04-012T02:45"
+        )
 
-    # addPageData(
-    #     title="part whatever",
-    #     number=4,
-    #     file="foo-4.png",
-    #     timestamp="2007-04-012T02:45"
-    # )
+        addPageData(
+            title="part whatever",
+            number=4,
+            file="foo-4.png",
+            timestamp="2007-04-012T02:45"
+        )
 
-    # addPageData(
-    #     title="part fuckoff",
-    #     number=69,
-    #     file="foo-69.png",
-    #     timestamp="2007-04-012T02:45"
-    # )
+        addPageData(
+            title="part fuckoff",
+            number=69,
+            file="foo-69.png",
+            timestamp="2007-04-012T02:45"
+        )
+    except ValueError as err:
+        print("Successfully caught ValueError")
+        print("ValueError: ", err)
+    except Exception as err:
+        print("Other excpetion raised")
+        print(type(err), ": ", err)
+    finally:
+        # Perform cleanup and restore backup
+        os.remove("metadata.json") 
+        shutil

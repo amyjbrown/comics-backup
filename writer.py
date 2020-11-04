@@ -24,12 +24,20 @@ def atomicWrite(file: str, data, text: bool=True):
 
 if __name__ == "__main__":
     with open("example.txt", "w+") as f:
-        f.write("whoop whoop fuck the police!\n")
-    atomicWrite("example.txt", "[SUCCESS] i'm in yer file replacing ya\n")
+        f.write("[FAILURE]Example 1 text\n")
+    atomicWrite("example.txt", 
+        "[SUCCESS] Example 1 Text successfuly rewritten\n"
+        )
 
-    with open("example2.txt", "w+") as f: f.write("this is an examplefile\n")
-    with open("temp_example2.txt", "w+") as f: f.write("this is an existing stub!!\n") 
-    atomicWrite("example2.txt", "[SUCCESS] repleced existing stub and example2.txt\n")
+    with open("example2.txt", "w+") as f: f.write("[FAILURE]Example 2 text\n")
+    with open("temp_example2.txt", "w+") as f: 
+        f.write("[tempfile]This is the pre-made example 2 tempfile\n")
+    atomicWrite("example2.txt", 
+        "[SUCCESS] repleced existing stub and example2.txt\n"
+        )
 
-    with open("temp_example3.txt", "w+") as f: f.write("stub with no other file to overwrite\n")
-    atomicWrite("example3.txt", "[SUCCESS] checking to see if all's well\n")
+    with open("temp_example3.txt", "w+") as f: 
+        f.write("[tempfile] Example 3 tempfile with no existing main file\n")
+    atomicWrite("example3.txt", 
+        "[SUCCESS] checking to see if all's well\n"
+        )
