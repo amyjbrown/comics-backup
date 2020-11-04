@@ -1,14 +1,13 @@
 import os
 import shutil
 
-def atomicWrite(file: str, data, text: bool=True, overwrite: bool=True):
+def atomicWrite(file: str, data, text: bool=True):
     """
     Closest one can get to an atomic write on windows
     write `data` to `file` atomically (e.g. using fsync) 
     uses a tmp_file "tmp_$file" for the atomic rewrite
 
     if `text` is true, then use 'wb' mode instead of 'w' mode
-    if `overwrite` is false, then the temp file is kept around (using this for metadata)
     WILL CLOBER TMP_FILE IF IT ALREADY EXISTS!!!
     """
     temp_file = f"temp_{file}"
@@ -16,13 +15,10 @@ def atomicWrite(file: str, data, text: bool=True, overwrite: bool=True):
         f.write(data)
         # ensure all data is on disk
         f.flush()
-        print(f.fileno())
         os.fsync(f.fileno())
 
-        os.replace(temp_file, file)
-        # finally, delete tmp_file
-        if overwrite:
-            os.remove(temp_file)
+    # replace real file with temp file now that it's been closed
+    os.replace(temp_file, file)
 
 
 

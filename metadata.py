@@ -60,8 +60,70 @@ def addPageData(title:str, file:str, number:int, timestamp: str):
 
     # this is tricky, and maybe unatomic
     _json_data["pages"].append(section)
+    ### TODO -- no way to ensure that we don't skip something
+    if _json_data["collected-pages"] + 1 != number:
+        current = _json_data["collected-pages"]
+        raise ValueError(
+            f"attempted to write metadata for page #{number}: {title}"
+            f"but only {current} pages have been written, which means {current-number-1} pages have been missed!"
+        )
+    else: 
+        _json_data["collected-pages"] += 1
     
     writer.atomicWrite(
         "metadata.json", 
         json.dumps(_json_data)
         )
+
+def downloadedPages() -> int:
+    """
+    see number of pages which have been downloaded
+    e.g. if foo-1, foo-2 and foo-3 have been downloaded, then return 3
+    """
+    return _json_data["collected-pages"]
+
+
+def lastPage() -> int:
+    """
+    get the last page to be downloaded
+    if a comic is 100 pages long, then lastPage() = 100
+    """
+    return _json_data["total-pages"]
+
+
+
+if __name__ == "__main__":
+    addPageData(
+        title= "intro",
+        number= 1,
+        file= "foo-1.png",
+        timestamp="2007-04-05T14:30"
+    )
+
+    addPageData(
+        title="denounement",
+        number=1,
+        file="foo-2.png",
+        timestamp="2007-04-012T02:45"
+    )
+
+    addPageData(
+        title="part 1",
+        number=3,
+        file="foo-3.png",
+        timestamp="2007-04-012T02:45"
+    )
+
+    # addPageData(
+    #     title="part whatever",
+    #     number=4,
+    #     file="foo-4.png",
+    #     timestamp="2007-04-012T02:45"
+    # )
+
+    # addPageData(
+    #     title="part fuckoff",
+    #     number=69,
+    #     file="foo-69.png",
+    #     timestamp="2007-04-012T02:45"
+    # )
