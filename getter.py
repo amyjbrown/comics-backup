@@ -19,11 +19,11 @@ def saveImage(title: int, article: int):
     req.raise_for_status()
 
     soup: BeautifulSoup = BeautifulSoup(req.text, features="html.parser")
-    title = soup.find_all("h1", class_="header02__chapter-name")[0].txt
+    title = soup.find_all("h1", class_="header02__chapter-name")[0].string
     
     # currently -2 seems to get what I need
-    script_source = soup.find_all("script")[-2].body
-    print(script_source) # debugging
+    script_source = soup.find_all("script")[-2].string
+    # print(script_source) # debugging
 
     image_url: str = None
     re_pattern = r"\s*comicData:\s*\[\s*'(.*)'\s*,\s*]"
