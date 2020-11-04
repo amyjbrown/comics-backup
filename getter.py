@@ -9,6 +9,11 @@ from io import BytesIO
 from colorama import Fore, Style
 END = Style.RESET_ALL
 
+# todo maybe obfuscate this more
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0",
+}
+
 def Url(title: int, article: int)->str:
     return f"https://www.smackjeeves.com/discover/detail?titleNo={title}&articleNo={article}"
 
@@ -17,7 +22,7 @@ def saveImage(title: int, article: int):
     # TODO -- this could be changed to the requests paramters file
     url = Url(title, article)
 
-    req = requests.get(url)
+    req = requests.get(url, headers=headers)
     req.raise_for_status()
 
     soup: BeautifulSoup = BeautifulSoup(req.text, features="html.parser")
@@ -37,7 +42,7 @@ def saveImage(title: int, article: int):
         image_url = match.group(1)
     else: raise RuntimeError("Couldn't locate image url in script")
 
-    image_req = requests.get(image_url)
+    image_req = requests.get(image_url, headers)
     image_req.raise_for_status()
     image_body = image_req.content # get binary data, as opposed to req.text
 
