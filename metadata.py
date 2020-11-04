@@ -30,7 +30,7 @@ import json
 import os
 import datetime
 import shutil
-
+from pprint import pprint
 import writer
 
 
@@ -94,53 +94,3 @@ def lastPage() -> int:
     return _json_data["total-pages"]
 
 
-
-if __name__ == "__main__":
-    # backup file for testing
-    shutil.copy()
-    # next, run our example sequence
-    try:
-        addPageData(
-            title= "intro",
-            number= 1,
-            file= "foo-1.png",
-            timestamp="2007-04-05T14:30"
-        )
-
-        addPageData(
-            title="denounement",
-            number=2,
-            file="foo-2.png",
-            timestamp="2007-04-012T02:45"
-        )
-
-        addPageData(
-            title="part 1",
-            number=3,
-            file="foo-3.png",
-            timestamp="2007-04-012T02:45"
-        )
-
-        addPageData(
-            title="part whatever",
-            number=4,
-            file="foo-4.png",
-            timestamp="2007-04-012T02:45"
-        )
-
-        addPageData(
-            title="part fuckoff",
-            number=69,
-            file="foo-69.png",
-            timestamp="2007-04-012T02:45"
-        )
-    except ValueError as err:
-        print("Successfully caught ValueError")
-        print("ValueError: ", err)
-    except Exception as err:
-        print("Other excpetion raised")
-        print(type(err), ": ", err)
-    finally:
-        # Perform cleanup and restore backup
-        os.remove("metadata.json") 
-        shutil
