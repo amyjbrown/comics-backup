@@ -27,7 +27,7 @@ def randomDelay():
 
     if delay_counter > 100:
         ammount = time()
-        print(f"{Fore.YELLOW}* pre-emptive extra sleep for {ammount} seconds... {END}")
+        print(f"{Fore.YELLOW} * pre-emptive extra sleep for {ammount} seconds... {END}")
         sleep(ammount)
         delay_counter = 0
     else:
@@ -51,15 +51,15 @@ for page in range(10, 200):
             # It'll display it's own success image here
             break
         except requests.exceptions.HTTPError as err:
-            print(f"{Fore.RED}! Error occured: {err} {END}")
+            print(f"{Fore.LIGHTRED_EX} !! Error occured: {err} {END}")
             exit(1)
         except RuntimeError as err:
-            print("{RED}! runtime error occured, presuming server timeout{END}")
+            print(f"{Fore.LIGHTRED_EX} !! runtime error occured, presuming server timeout{END}")
             # attempt to wait between 3 and 10 minutes
             time = random.randrange(180, 600)
-            print(f"{Fore.YELLOW}* iniating cooldown for {time // 60}:{time % 60}...{END}")
+            print(f"{Fore.YELLOW} * iniating cooldown for {time // 60}:{time % 60}...{END}")
             sleep(time)
-            print(f"{Fore.YELLOW}* cooldown finished, attempting to redownload {page}{END}")
+            print(f"{Fore.YELLOW} * cooldown finished, attempting to redownload {page}{END}")
             if tries < 5:
                 continue 
             else:
