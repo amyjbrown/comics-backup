@@ -41,7 +41,7 @@ TITLE = 125360
 
 # saveImage(TITLE, ARTICLE)
 # total articles = 2114
-for page in range(1, 10):
+for page in range(10, 200):
     tries = 0
     randomDelay()
     print(f"{Fore.GREEN}Downloading page {page}...{END}")
