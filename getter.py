@@ -19,6 +19,9 @@ def saveImage(title: int, article: int):
     req.raise_for_status()
 
     soup: BeautifulSoup = BeautifulSoup(req.text, features="html.parser")
+    # specific to error handling
+    if soup.title.string == "Error":
+        raise RuntimeError("Error page raised")
     title = soup.find_all("h1", class_="header02__chapter-name")[0].string
     
     # currently -2 seems to get what I need

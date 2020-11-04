@@ -19,19 +19,20 @@ def randomDelay():
 
     if delay_counter > 100:
         ammount = time()
-        print(f"Cooldown: sleeping for {ammount} seconds...")
+        print(f"pre-emptive extra sleep for {ammount} seconds...")
         sleep(ammount)
         delay_counter = 0
     else:
-        sleep(0.01)
+        sleep(random.randrange(0, 10))
     
-    delay_counter += random.randrange(8, 12)
+    delay_counter += random.randrange(6, 13)
 
 TITLE = 125360
 # ARTICLE = 19
 
 # saveImage(TITLE, ARTICLE)
-for page in range(1, 2114):
+# total articles = 2114
+for page in range(1, 10):
     tries = 0
     randomDelay()
     print(f"Downloading page {page}...")
@@ -39,6 +40,7 @@ for page in range(1, 2114):
         try:
             saveImage(TITLE, page)
             # It'll display it's own success image here
+            break
         except requests.exceptions.HTTPError as err:
             print(f"Error occured: {err}")
             exit(1)
