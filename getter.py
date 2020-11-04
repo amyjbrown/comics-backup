@@ -6,6 +6,8 @@ import re
 import requests
 from PIL import Image
 from io import BytesIO
+from colorama import Fore, Style
+END = Style.RESET_ALL
 
 def Url(title: int, article: int)->str:
     return f"https://www.smackjeeves.com/discover/detail?titleNo={title}&articleNo={article}"
@@ -42,7 +44,7 @@ def saveImage(title: int, article: int):
     with open(f"pages/wildflowers-{article}({title}).png", "wb+") as f:
         f.write(image_body)
         f.close()
-    print("Saved file #{article}: ", 
-            f"wildflowers-{article}({title}).png"
+    print(f"{Fore.GREEN}Saved file #{article}: ", 
+            f"wildflowers-{article}({title}).png{END}"
     )
 
