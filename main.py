@@ -21,9 +21,9 @@ def randomDelay():
 
     def time():
         """
-        get beta-variate time on [10,20] seconds
+        get beta-variate time on [15,30] seconds
         """
-        return random.betavariate(2, 3) * 9 + 11
+        return random.betavariate(2, 3) * 15 + 14
 
     if delay_counter > 100:
         ammount = time()
@@ -41,7 +41,7 @@ TITLE = 125360
 
 # saveImage(TITLE, ARTICLE)
 # total articles = 2114
-for page in range(10, 200):
+for page in range(17, 200):
     tries = 0
     randomDelay()
     print(f"{Fore.GREEN}Downloading page {page}...{END}")
