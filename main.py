@@ -17,7 +17,7 @@ def randomDelay():
     global delay_counter
 
     def regular():
-        return random.random() * 6
+        return random.random() * 5.5 + 0.5 
 
     def time():
         """
