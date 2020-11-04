@@ -2,10 +2,12 @@
 Backup Wildflowers
 """
 # quick test to see if this loads properly
-from getter import saveImage
-import random
 from time import sleep
+import random
 import requests
+from colorama import init, Fore, Back, Style
+from getter import saveImage
+END = Style.RESET_ALL
 
 delay_counter = 0
 def randomDelay():
@@ -19,11 +21,12 @@ def randomDelay():
 
     if delay_counter > 100:
         ammount = time()
-        print(f"pre-emptive extra sleep for {ammount} seconds...")
+        print(f"{Fore.YELLOW}* pre-emptive extra sleep for {ammount} seconds... {END}")
         sleep(ammount)
         delay_counter = 0
     else:
-        sleep(random.randrange(0, 10))
+        # random delay to keep things happy 
+        sleep(random.randrange(0, 6))
     
     delay_counter += random.randrange(6, 13)
 
@@ -42,15 +45,15 @@ for page in range(1, 10):
             # It'll display it's own success image here
             break
         except requests.exceptions.HTTPError as err:
-            print(f"Error occured: {err}")
+            print(f"{Fore.RED}! Error occured: {err} {END}")
             exit(1)
         except RuntimeError as err:
-            print("runtime error occured, presuming server timeout")
-            # attempt to wait between 2 and 5 minutes
-            time = random.randrange(120, 300)
-            print(f"iniating cooldown for {time // 60}:{time % 60}...")
+            print("{RED}! runtime error occured, presuming server timeout")
+            # attempt to wait between 3 and 10 minutes
+            time = random.randrange(180, 600)
+            print(f"{Fore.YELLOW}* iniating cooldown for {time // 60}:{time % 60}...{END}")
             sleep(time)
-            print(f"cooldown finished, attempting to redownload {page}")
+            print(f"{Fore.YELLOW}* cooldown finished, attempting to redownload {page}{END}")
             if tries < 5:
                 continue 
             else:
