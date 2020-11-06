@@ -10,6 +10,7 @@ def atomicWrite(file: str, data, text: bool=True):
     if `text` is true, then use 'wb' mode instead of 'w' mode
     WILL CLOBER TMP_FILE IF IT ALREADY EXISTS!!!
     """
+    # TODO this fails for directory files
     temp_file = f"temp_{file}"
     with open(temp_file, "w+" if text else "wb+") as f:
         f.write(data)

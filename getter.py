@@ -9,6 +9,7 @@ from io import BytesIO
 from console import *
 from fake_useragent import UserAgent
 import json
+import writer
 
 _ua = UserAgent(fallback="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0")
 
@@ -34,7 +35,7 @@ def saveImage(title: int, article: int):
     # specific to error handling
     if soup.title.string == "Error":
         raise RuntimeError("Error page raised")
-    # title = soup.find_all("h1", class_="header02__chapter-name")[0].string
+    title = soup.find_all("h1", class_="header02__chapter-name")[0].string
     
     # currently -2 seems to get what I need
     script_source = soup.find_all("script")[-2].string
@@ -51,7 +52,7 @@ def saveImage(title: int, article: int):
     image_req.raise_for_status()
     image_body = image_req.content # get binary data, as opposed to req.text
 
-    with open(f"pages/wildflowers-{article}.png", "wb+") as f:
+    with open("path/wildflowers-{article}.png", "wb+") as f:
         f.write(image_body)
         f.close()
     print(f"{INFO}Saved file #{article} -- {title}:", 
@@ -64,7 +65,11 @@ def fetchCover(url: str):
     """
     req = requests.get(url, _header())
     req.raise_for_status()
-    return req.content
+    writer.atomicWrite(
+        "cover.png",
+        req.content,
+        False
+    )
 
 
 def getList(url: str) -> list:
@@ -76,7 +81,7 @@ def getList(url: str) -> list:
         headers=_header(),
     )
     body = req.json()
-    print(type(body))
+    # print(type(body))
     return body['result']['list']
 
 

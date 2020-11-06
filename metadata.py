@@ -95,24 +95,24 @@ def lastPage() -> int:
     return _json_data["total-pages"]
 
 
-def saveCover(data: list):
+def recoverCover(data: list):
     """
-    fetches and stores the cover page if it is not defined
+    fetches and stores the cover page if it is not defined,
+    and updates metadata.json as appropriate
     """
     if _json_data['cover-page'] is not None: return
 
-    imgUrl = data['imgUrl']
-    image = getter.fetchCover(imgUrl)
+    url = data[0]['imgUrl']
+    getter.fetchCover(url)
+
+    _json_data['cover-page'] = "cover.png"
     writer.atomicWrite(
-        file = "pages/cover.png",
-        data = image,
-        text = False
+        "metdata.json",
+        json.dumps(_json_data),
     )
-    _json_data['cover-page'] = "cover.png" 
     
 
 if __name__ == "__main__":
     source = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
     data = getter.getList(source)
-    print(data)
-    saveCover(data)
+    recoverCover(data)
