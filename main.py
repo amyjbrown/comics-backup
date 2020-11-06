@@ -4,6 +4,7 @@ Backup Wildflowers
 # quick test to see if this loads properly
 from time import sleep
 import random
+import traceback
 import requests
 
 import metadata
@@ -54,12 +55,13 @@ if CURRENTPAGE > FINALPAGE:
     exit(1)
 
 # get list with metadata and begin recovering information from it
+# if this errors out frankly things are already fucked
 LIST = getList(LISTSOURCE)
 metadata.recoverCover(LIST)
 
 try: 
     for page in range(CURRENTPAGE+1, CURRENTPAGE + 301): # Account for smackjeeves page ranges [1..n] 
-        tries = 0
+        tries = 5
         randomDelay()
         print(f"{INFO}Downloading page {page}...{END}")
 
@@ -89,7 +91,8 @@ try:
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}...{END}")
                 sleep(time)
                 print(f"{DEBUG} * cooldown finished, attempting to redownload {page}{END}")
-                if tries < 5:
+                if tries == 0:
+                    tries -= 1
                     continue 
                 else:
                     print(f"{ALERT} !! couldn't finish connection and download after 5 attempts, saving and exiting...")
@@ -101,9 +104,14 @@ except KeyboardInterrupt:
     print(f"{ALERT} !! Saving and exiting...{END}")
     exit(0)
 # maange any other exception, unnescary but safe
-except Exception as e:
+except:
     metadata.backupData()
-    print(f"{ALERT} !! Caught {type(e)}:'{e}' caught, saving and exiting...{END}")
+    print(f"{ALERT} !! Caught exception, saving and exiting... {END}")
+    print(
+        f"{DEBUG}* Exception: ",
+        traceback.format_exc(),
+        f"{END}"
+    )
     exit(1)
 
 

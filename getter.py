@@ -10,7 +10,7 @@ from console import *
 from fake_useragent import UserAgent
 import json
 import writer
-
+TIMEOUT = 60 # 1 minute timeout
 _ua = UserAgent(fallback="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0")
 
 def _header():
@@ -28,7 +28,7 @@ def saveImage(title: int, article: int) -> str:
     # TODO -- this could be changed to the requests paramters file
     url = Url(title, article)
 
-    req = requests.get(url, headers=_header())
+    req = requests.get(url, headers=_header(), timeout=TIMEOUT)
     req.raise_for_status()
 
     soup: BeautifulSoup = BeautifulSoup(req.text, features="html.parser")
@@ -48,7 +48,7 @@ def saveImage(title: int, article: int) -> str:
         image_url = match.group(1)
     else: raise RuntimeError("Couldn't locate image url in script")
 
-    image_req = requests.get(image_url, _header())
+    image_req = requests.get(image_url, _header(), timeout=TIMEOUT)
     image_req.raise_for_status()
     image_body = image_req.content # get binary data, as opposed to req.text
 
@@ -65,7 +65,7 @@ def fetchCover(url: str):
     """
     fet image data 
     """
-    req = requests.get(url, _header())
+    req = requests.get(url, _header(), timeout=60)
     req.raise_for_status()
     writer.atomicWrite(
         "cover.png",
@@ -81,6 +81,7 @@ def getList(url: str) -> list:
     req = requests.get(
         url,
         headers=_header(),
+        timeout=TIMEOUT
     )
     body = req.json()
     # print(type(body))

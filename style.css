@@ -1,0 +1,6 @@
+h1, p, a.center, img.block {
+    display: block;
+    margin: 0 auto;
+    /* text-align: center; */
+    display: block;
+}
