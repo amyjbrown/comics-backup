@@ -55,7 +55,7 @@ LIST = getList(LISTSOURCE)
 metadata.recoverCover(LIST)
 
 
-for page in range(CURRENTPAGE+1, 10): # Account for smackjeeves page ranges [1..n] 
+for page in range(CURRENTPAGE+1, CURRENTPAGE + 10): # Account for smackjeeves page ranges [1..n] 
     tries = 0
     randomDelay()
     print(f"{INFO}Downloading page {page}...{END}")
