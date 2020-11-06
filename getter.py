@@ -23,7 +23,7 @@ def _header():
 def Url(title: int, article: int)->str:
     return f"https://www.smackjeeves.com/discover/detail?titleNo={title}&articleNo={article}"
 
-def saveImage(title: int, article: int):
+def saveImage(title: int, article: int) -> str:
 
     # TODO -- this could be changed to the requests paramters file
     url = Url(title, article)
@@ -58,6 +58,8 @@ def saveImage(title: int, article: int):
     print(f"{INFO}Saved file #{article} -- {title}:", 
             f"wildflowers-{article}.png{END}"
     )
+    # now for bonus information, we return the title
+    return title
 
 def fetchCover(url: str):
     """

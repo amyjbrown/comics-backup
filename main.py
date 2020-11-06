@@ -7,7 +7,7 @@ import random
 import requests
 
 import metadata
-from getter import saveImage
+from getter import saveImage, getList
 from console import INFO, ALERT, DEBUG, END
 
 
@@ -41,7 +41,7 @@ FINALPAGE = metadata.lastPage()
 CURRENTPAGE = metadata.downloadedPages()
 
 # this is where links to the articles, the pre-stub photos, and everything else can be downloaded 
-LISTDATA = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
+LISTSOURCE = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
 
 if CURRENTPAGE == FINALPAGE:
     print(f"{INFO}Finished Downloading!{END}")
@@ -50,15 +50,30 @@ if CURRENTPAGE > FINALPAGE:
     print(f"{ALERT} !! Something went wrong, pages to download({CURRENTPAGE}) exceed max pages!{END}")
     exit(1)
 
-for page in range(CURRENTPAGE+1, FINALPAGE+1): # Account for smackjeves page ranges [1..n] 
+# get list with metadata and begin recovering information from it
+LIST = getList(LISTSOURCE)
+metadata.recoverCover(LIST)
+
+
+for page in range(CURRENTPAGE+1, FINALPAGE+1): # Account for smackjeeves page ranges [1..n] 
     tries = 0
     randomDelay()
     print(f"{INFO}Downloading page {page}...{END}")
+
     while True:
+
         try:
-            saveImage(TITLE, page)
-            # It'll display it's own success image here
+            page_title = saveImage(TITLE, page)
+            # It'll display it's own success string here
+            metadata.addPageData(
+                title=page_title,
+                file=f"wildflowers-{page}.png",
+                number=page,
+                timestamp=LIST[page-1]['distributedDate']
+            )
             break
+
+
         except requests.exceptions.HTTPError as err:
             print(f"{ALERT} !! Error occured: {err} {END}")
             exit(1)
