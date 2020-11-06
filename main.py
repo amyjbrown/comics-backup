@@ -11,12 +11,15 @@ from getter import saveImage, getList
 from console import INFO, ALERT, DEBUG, END
 
 
-delay_counter = 0
+delay_counter = 50
 def randomDelay():
     global delay_counter
 
     def regular():
-        return random.random() * 5.5 + 0.5 
+        """ 
+        delay between [0,2) seconds
+        """
+        return random.random()
 
     def time():
         """
@@ -24,16 +27,16 @@ def randomDelay():
         """
         return random.betavariate(2, 3) * 15 + 14
 
-    if delay_counter > 100:
+    if delay_counter == 0:
         ammount = time()
         print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... {END}")
         sleep(ammount)
-        delay_counter = 0
+        delay_counter = random.randrange(40, 60)
     else:
         # random delay to keep things happy 
         sleep(regular())
     
-    delay_counter += random.randrange(6, 10)
+    delay_counter -= 1
 
 TITLE = 125360
 # ARTICLE = 19
@@ -54,40 +57,54 @@ if CURRENTPAGE > FINALPAGE:
 LIST = getList(LISTSOURCE)
 metadata.recoverCover(LIST)
 
+try: 
+    for page in range(CURRENTPAGE+1, CURRENTPAGE + 301): # Account for smackjeeves page ranges [1..n] 
+        tries = 0
+        randomDelay()
+        print(f"{INFO}Downloading page {page}...{END}")
 
-for page in range(CURRENTPAGE+1, CURRENTPAGE + 10): # Account for smackjeeves page ranges [1..n] 
-    tries = 0
-    randomDelay()
-    print(f"{INFO}Downloading page {page}...{END}")
+        while True:
 
-    while True:
-
-        try:
-            page_title = saveImage(TITLE, page)
-            # It'll display it's own success string here
-            metadata.addPageData(
-                title=page_title,
-                file=f"wildflowers-{page}.png",
-                number=page,
-                timestamp=LIST[page-1]['distributedDate']
-            )
-            break
+            try:
+                page_title = saveImage(TITLE, page)
+                # It'll display it's own success string here
+                metadata.addPageData(
+                    title=page_title,
+                    file=f"wildflowers-{page}.png",
+                    number=page,
+                    timestamp=LIST[page-1]['distributedDate']
+                )
+                break
 
 
-        except requests.exceptions.HTTPError as err:
-            print(f"{ALERT} !! Error occured: {err} {END}")
-            metadata.backupData()
-            exit(1)
-
-        except RuntimeError as err:
-            print(f"{ALERT} !! runtime error occured, presuming server timeout{END}")
-            # attempt to wait between 3 and 10 minutes
-            time = random.randrange(180, 600)
-            print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}...{END}")
-            sleep(time)
-            print(f"{DEBUG} * cooldown finished, attempting to redownload {page}{END}")
-            if tries < 5:
-                continue 
-            else:
+            except requests.exceptions.HTTPError as err:
+                print(f"{ALERT} !! Error occured: {err} {END}")
                 metadata.backupData()
                 exit(1)
+
+            except RuntimeError as err:
+                print(f"{ALERT} !! runtime error occured, presuming server timeout{END}")
+                # attempt to wait between 3 and 10 minutes
+                time = random.randrange(180, 600)
+                print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}...{END}")
+                sleep(time)
+                print(f"{DEBUG} * cooldown finished, attempting to redownload {page}{END}")
+                if tries < 5:
+                    continue 
+                else:
+                    metadata.backupData()
+                    exit(1)
+# Catch Control-C
+except KeyboardInterrupt:
+    metadata.backupData()
+    print(f"{ALERT} !! Saving and exiting...{END}")
+    exit(0)
+# maange any other exception, unnescary but safe
+except Exception as e:
+    metadata.backupData()
+    print(f"{ALERT} !! Caught {type(e)}:'{e}' caught, saving and exiting...{END}")
+    exit(1)
+
+
+# if the program exists successfuly, also save metadata
+metadata.backupData()

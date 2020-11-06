@@ -55,8 +55,8 @@ def saveImage(title: int, article: int) -> str:
     with open(f"pages/wildflowers-{article}.png", "wb+") as f:
         f.write(image_body)
         f.close()
-    print(f"{INFO}Saved file #{article} -- {title}:", 
-            f"wildflowers-{article}.png{END}"
+    print(f"{INFO}Saved file #{article} -- \'{title}\'", 
+            f"(wildflowers-{article}.png{END}) "
     )
     # now for bonus information, we return the title
     return title
