@@ -9,7 +9,8 @@ the file will look like
     "total-pages": 42,                      // total pages the file will contain, on [1, "total-pages"]
     "collected-pages": 2,                   // how many pages have been collected, starting from 1
                                             // 0 indicates no pages have been downlaoded
-    "pages": [
+    "cover-page": "cover.png",              // cover page of comic -- either string or null
+    "pages": [                              // list of data for each comic
         {
             "title": "intro",               // title of individual page
             "number:" 1,                    // current page number, for the sake of convnience
@@ -32,7 +33,7 @@ import datetime
 import shutil
 from pprint import pprint
 import writer
-
+import getter
 
 # generate metadata.json from stub.json if it doesn't already exists, and store content in _file
 _file = None
@@ -94,3 +95,24 @@ def lastPage() -> int:
     return _json_data["total-pages"]
 
 
+def saveCover(data: list):
+    """
+    fetches and stores the cover page if it is not defined
+    """
+    if _json_data['cover-page'] is not None: return
+
+    imgUrl = data['imgUrl']
+    image = getter.fetchCover(imgUrl)
+    writer.atomicWrite(
+        file = "pages/cover.png",
+        data = image,
+        text = False
+    )
+    _json_data['cover-page'] = "cover.png" 
+    
+
+if __name__ == "__main__":
+    source = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
+    data = getter.getList(source)
+    print(data)
+    saveCover(data)

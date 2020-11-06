@@ -58,6 +58,14 @@ def saveImage(title: int, article: int):
             f"wildflowers-{article}.png{END}"
     )
 
+def fetchCover(url: str):
+    """
+    fet image data 
+    """
+    req = requests.get(url, _header())
+    req.raise_for_status()
+    return req.content
+
 
 def getList(url: str) -> list:
     """
