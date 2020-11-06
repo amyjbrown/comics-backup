@@ -78,12 +78,12 @@ try:
 
 
             except requests.exceptions.HTTPError as err:
-                print(f"{ALERT} !! Error occured: {err} {END}")
+                print(f"{ALERT} !! Error occured: {err}. Saving and exiting... {END}")
                 metadata.backupData()
                 exit(1)
 
             except RuntimeError as err:
-                print(f"{ALERT} !! runtime error occured, presuming server timeout{END}")
+                print(f"{DEBUG} * runtime error occured, presuming server timeout{END}")
                 # attempt to wait between 3 and 10 minutes
                 time = random.randrange(180, 600)
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}...{END}")
@@ -92,6 +92,7 @@ try:
                 if tries < 5:
                     continue 
                 else:
+                    print(f"{ALERT} !! couldn't finish connection and download after 5 attempts, saving and exiting...")
                     metadata.backupData()
                     exit(1)
 # Catch Control-C
