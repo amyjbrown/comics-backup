@@ -41,7 +41,7 @@ FINALPAGE = metadata.lastPage()
 CURRENTPAGE = metadata.downloadedPages()
 
 # this is where links to the articles, the pre-stub photos, and everything else can be downloaded 
-LISTDATA="https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
+LISTDATA = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
 
 if CURRENTPAGE == FINALPAGE:
     print(f"{INFO}Finished Downloading!{END}")
