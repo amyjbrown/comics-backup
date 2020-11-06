@@ -74,10 +74,21 @@ def addPageData(title:str, file:str, number:int, timestamp: str):
     else: 
         _json_data["collected-pages"] += 1
     
+    # writer.atomicWrite(
+    #     "metadata.json", 
+    #     json.dumps(_json_data)
+    #     )
+
+def backupData():
+    """
+    Backup metadata in case of exception
+    """
     writer.atomicWrite(
         "metadata.json", 
         json.dumps(_json_data)
         )
+
+
 
 def downloadedPages() -> int:
     """

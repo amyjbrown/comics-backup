@@ -55,7 +55,7 @@ LIST = getList(LISTSOURCE)
 metadata.recoverCover(LIST)
 
 
-for page in range(CURRENTPAGE+1, FINALPAGE+1): # Account for smackjeeves page ranges [1..n] 
+for page in range(CURRENTPAGE+1, 10): # Account for smackjeeves page ranges [1..n] 
     tries = 0
     randomDelay()
     print(f"{INFO}Downloading page {page}...{END}")
@@ -76,7 +76,9 @@ for page in range(CURRENTPAGE+1, FINALPAGE+1): # Account for smackjeeves page ra
 
         except requests.exceptions.HTTPError as err:
             print(f"{ALERT} !! Error occured: {err} {END}")
+            metadata.backupData()
             exit(1)
+
         except RuntimeError as err:
             print(f"{ALERT} !! runtime error occured, presuming server timeout{END}")
             # attempt to wait between 3 and 10 minutes
@@ -87,4 +89,5 @@ for page in range(CURRENTPAGE+1, FINALPAGE+1): # Account for smackjeeves page ra
             if tries < 5:
                 continue 
             else:
+                metadata.backupData()
                 exit(1)
