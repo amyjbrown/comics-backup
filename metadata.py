@@ -107,7 +107,7 @@ def recoverCover(data: list):
 
     _json_data['cover-page'] = "cover.png"
     writer.atomicWrite(
-        "metdata.json",
+        "metadata.json",
         json.dumps(_json_data),
     )
     
