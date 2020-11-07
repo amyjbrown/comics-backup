@@ -43,7 +43,6 @@ TITLE = 125360
 # ARTICLE = 19
 FINALPAGE = metadata.lastPage()
 CURRENTPAGE = metadata.downloadedPages()
-
 # this is where links to the articles, the pre-stub photos, and everything else can be downloaded 
 LISTSOURCE = "https://www.smackjeeves.com/api/discover/articleList?titleNo=125360"
 
@@ -56,14 +55,31 @@ if CURRENTPAGE > FINALPAGE:
 
 # get list with metadata and begin recovering information from it
 # if this errors out frankly things are already fucked
-LIST = getList(LISTSOURCE)
-metadata.recoverCover(LIST)
+try:
+    from socket import gaierror
+    from urllib3.exceptions import MaxRetryError, NewConnectionError
+    from requests.exceptions import ConnectionError
+    print(f"{INFO}Downloading article list...")
+    LIST = getList(LISTSOURCE)
+    metadata.recoverCover(LIST)
+except (gaierror, MaxRetryError, NewConnectionError, ConnectionError) as err:
+    print(f"{ALERT} !! Unable to make connection to acquire article list, check internet connection. Saving and exiting... !! {END}")
+    print(f"{DEBUG} * Exception caught: * \n{END}")
+    print(f"{DEBUG} {type(err)} : {err} {END}")
+    metadata.backupData()
+    exit(1)
+
+# finally would make this appear, so I'm calling it hear
+print(f"{INFO}Successfully downloaded article list")
 
 try: 
     for page in range(CURRENTPAGE+1, CURRENTPAGE + 301): # Account for smackjeeves page ranges [1..n] 
         tries = 5
         randomDelay()
-        print(f"{INFO}Downloading page {page}...{END}")
+        progress = (0 if CURRENTPAGE == 0 
+            else int(page / FINALPAGE * 100)
+        )
+        print(f"{INFO}Attemping to downloading page #{page}/#{FINALPAGE} ({progress}%)...{END}")
 
         while True:
 
@@ -94,12 +110,12 @@ try:
                 time = random.randrange(10, 15)
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}... * {END}")
                 sleep(time)
-                print(f"{INFO}cooldown finished, attempting to redownload page #{page}{END}")
+                print(f"{INFO}Cooldown finished, attempting to redownload page #{page}{END}")
                 if tries >= 0:
                     tries -= 1
                     continue 
                 else:
-                    print(f"{ALERT} !! couldn't finish connection and download after 5 attempts, saving and exiting... !! {END}")
+                    print(f"{ALERT} !! couldn't make connection and download page #{page} after 5 attempts, saving and exiting... !! {END}")
                     metadata.backupData()
                     exit(1)
 # Catch Control-C
