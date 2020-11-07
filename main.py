@@ -12,7 +12,7 @@ from getter import saveImage, getList
 from console import INFO, ALERT, DEBUG, END
 
 
-delay_counter = 50
+delay_counter = 30
 def randomDelay():
     global delay_counter
 
@@ -26,13 +26,13 @@ def randomDelay():
         """
         get beta-variate time on [15,30] seconds
         """
-        return random.betavariate(2, 3) * 15 + 14
+        return random.randrange(15, 30)
 
     if delay_counter == 0:
         ammount = time()
         print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... {END}")
         sleep(ammount)
-        delay_counter = random.randrange(40, 60)
+        delay_counter = random.randrange(20, 40)
     else:
         # random delay to keep things happy 
         sleep(regular())
