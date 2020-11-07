@@ -20,12 +20,12 @@ def _header():
     }
 
 
-class GetterError(IOError):
+class GetterError(Exception):
     """
     Error for when the remote server gives you a valid 200 page but that doesn't have the content
     """
     def __init__(self, text: str):
-        super().__init__(self, text)
+        super(GetterError, self).__init__(text)
 
 
 def Url(title: int, article: int)->str:

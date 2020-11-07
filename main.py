@@ -107,7 +107,7 @@ except KeyboardInterrupt:
     metadata.backupData()
     print(f"{ALERT} !! Keybord Interupt. Saving and exiting... !! {END}")
     exit(0)
-# maange any other exception, unnescary but safe
+# manage any other exception, actually turned out to be necessary
 except:
     metadata.backupData()
     print(f"{ALERT} !! Caught unexpected exception, saving and exiting... !! {END}")
