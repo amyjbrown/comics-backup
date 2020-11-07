@@ -91,11 +91,11 @@ try:
                 print(f"{DEBUG} * runtime error occured, presuming server timeout * {END}")
                 print(f"{DEBUG} * caught exception {type(err)}: {err} *")
                 # attempt to wait between 3 and 10 minutes
-                time = random.randrange(180, 600)
+                time = random.randrange(10, 15)
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}... * {END}")
                 sleep(time)
-                print(f"{DEBUG} * cooldown finished, attempting to redownload page #{page} * {END}")
-                if tries == 0:
+                print(f"{INFO}cooldown finished, attempting to redownload page #{page}{END}")
+                if tries >= 0:
                     tries -= 1
                     continue 
                 else:
@@ -108,6 +108,9 @@ except KeyboardInterrupt:
     print(f"{ALERT} !! Keybord Interupt. Saving and exiting... !! {END}")
     exit(0)
 # manage any other exception, actually turned out to be necessary
+except SystemExit as err:
+    metadata.backupData() # just in case!
+    raise # will this work??
 except:
     metadata.backupData()
     print(f"{ALERT} !! Caught unexpected exception, saving and exiting... !! {END}")
