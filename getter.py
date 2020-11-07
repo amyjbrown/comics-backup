@@ -20,10 +20,20 @@ def _header():
     }
 
 
+class GetterError(IOError):
+    """
+    Error for when the remote server gives you a valid 200 page but that doesn't have the content
+    """
+    def __init__(self, text: str):
+        super().__init__(self, text)
+
+
 def Url(title: int, article: int)->str:
     return f"https://www.smackjeeves.com/discover/detail?titleNo={title}&articleNo={article}"
 
 def saveImage(title: int, article: int) -> str:
+    # short circuit for testing:
+    raise GetterError("Example Testing Error")
 
     # TODO -- this could be changed to the requests paramters file
     url = Url(title, article)
@@ -46,7 +56,7 @@ def saveImage(title: int, article: int) -> str:
     
     if match := re.search(re_pattern, script_source):
         image_url = match.group(1)
-    else: raise RuntimeError("Couldn't locate image url in script")
+    else: raise GetterError("Server raised psuedo-404 page")
 
     image_req = requests.get(image_url, _header(), timeout=TIMEOUT)
     image_req.raise_for_status()

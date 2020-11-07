@@ -8,7 +8,7 @@ import traceback
 import requests
 
 import metadata
-from getter import saveImage, getList
+from getter import saveImage, getList, GetterError
 from console import INFO, ALERT, DEBUG, END
 
 
@@ -30,7 +30,7 @@ def randomDelay():
 
     if delay_counter == 0:
         ammount = time()
-        print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... {END}")
+        print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... *{END}")
         sleep(ammount)
         delay_counter = random.randrange(20, 40)
     else:
@@ -51,7 +51,7 @@ if CURRENTPAGE == FINALPAGE:
     print(f"{INFO}Finished Downloading!{END}")
     exit(0)
 if CURRENTPAGE > FINALPAGE:
-    print(f"{ALERT} !! Something went wrong, pages to download({CURRENTPAGE}) exceed max pages!{END}")
+    print(f"{ALERT} !! Something went wrong, pages to download({CURRENTPAGE}) exceed max pages !! {END}")
     exit(1)
 
 # get list with metadata and begin recovering information from it
@@ -79,36 +79,40 @@ try:
                 break
 
 
-            except requests.exceptions.HTTPError as err:
-                print(f"{ALERT} !! Error occured: {err}. Saving and exiting... {END}")
-                metadata.backupData()
-                exit(1)
+            # except requests.exceptions.HTTPError as err:
+            #     print(f"{ALERT} !! Error occured: {err}. Saving and exiting... !! {END}")
+            #     metadata.backupData()
+            #     exit(1)
 
-            except RuntimeError as err:
-                print(f"{DEBUG} * runtime error occured, presuming server timeout{END}")
+            # this should catch both any requests.raiseforstatus(), connection/timeout errors
+            # maybe should handle response errors uniquely?
+            # e.g. timeout/connection errors
+            except (requests.exceptions.RequestException, GetterError) as err:
+                print(f"{DEBUG} * runtime error occured, presuming server timeout * {END}")
+                print(f"{DEBUG} * caught exception {type(err)}: {err} *")
                 # attempt to wait between 3 and 10 minutes
                 time = random.randrange(180, 600)
-                print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}...{END}")
+                print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}... * {END}")
                 sleep(time)
-                print(f"{DEBUG} * cooldown finished, attempting to redownload {page}{END}")
+                print(f"{DEBUG} * cooldown finished, attempting to redownload page #{page} * {END}")
                 if tries == 0:
                     tries -= 1
                     continue 
                 else:
-                    print(f"{ALERT} !! couldn't finish connection and download after 5 attempts, saving and exiting...")
+                    print(f"{ALERT} !! couldn't finish connection and download after 5 attempts, saving and exiting... !! {END}")
                     metadata.backupData()
                     exit(1)
 # Catch Control-C
 except KeyboardInterrupt:
     metadata.backupData()
-    print(f"{ALERT} !! Saving and exiting...{END}")
+    print(f"{ALERT} !! Keybord Interupt. Saving and exiting... !! {END}")
     exit(0)
 # maange any other exception, unnescary but safe
 except:
     metadata.backupData()
-    print(f"{ALERT} !! Caught exception, saving and exiting... {END}")
+    print(f"{ALERT} !! Caught unexpected exception, saving and exiting... !! {END}")
     print(
-        f"{DEBUG}* Exception: ",
+        f"{DEBUG}* Stack Trace Info: * \n",
         traceback.format_exc(),
         f"{END}"
     )
