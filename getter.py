@@ -33,8 +33,7 @@ def Url(title: int, article: int)->str:
 
 def saveImage(title: int, article: int) -> str:
     # short circuit for testing:
-    raise GetterError("Example Testing Error")
-
+    # raise GetterError("Example Testing Error")
     # TODO -- this could be changed to the requests paramters file
     url = Url(title, article)
 
