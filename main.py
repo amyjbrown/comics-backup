@@ -20,13 +20,13 @@ def randomDelay():
         """ 
         delay between [0,2) seconds
         """
-        return random.random()
+        return random.random() * 2
 
     def time():
         """
-        get beta-variate time on [15,30] seconds
+        get beta-variate time on [30,60] seconds
         """
-        return random.randrange(15, 30)
+        return random.randrange(30, 61)
 
     if delay_counter == 0:
         ammount = time()
