@@ -104,13 +104,14 @@ try:
             # maybe should handle response errors uniquely?
             # e.g. timeout/connection errors
             except (requests.exceptions.RequestException, GetterError) as err:
-                print(f"{DEBUG} * runtime error occured, presuming server timeout * {END}")
-                print(f"{DEBUG} * caught exception {type(err)}: {err} *")
+                print(f"{DEBUG} * Runtime error occured, presuming server timeout * {END}")
+                print(f"{DEBUG} * Exception info: {type(err)}:*{END}")
+                print(f"{DEBUG}", err, "{END}")
                 # attempt to wait between 3 and 10 minutes
-                time = random.randrange(10, 15)
+                time = random.randrange(60, 180)
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}... * {END}")
                 sleep(time)
-                print(f"{INFO}Cooldown finished, attempting to redownload page #{page}{END}")
+                print(f"{INFO}Cooldown finished, attempting to redownload page #{page}({5 - tries + 1}/5){END}")
                 if tries >= 0:
                     tries -= 1
                     continue 
