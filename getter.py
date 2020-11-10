@@ -10,8 +10,43 @@ from console import *
 from fake_useragent import UserAgent
 import json
 import writer
+import random
 TIMEOUT = 60 # 1 minute timeout
 _ua = UserAgent(fallback="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0")
+
+delay_counter = 30
+def randomDelay():
+    global delay_counter
+
+    def regular():
+        """ 
+        delay between [0,2) seconds
+        """
+        return random.random() * 2
+
+    def time():
+        """
+        get beta-variate time on [30,60] seconds
+        """
+        return random.randrange(30, 61)
+
+    if delay_counter == 0:
+        ammount = time()
+        print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... *{END}")
+        sleep(ammount)
+        delay_counter = random.randrange(20, 40)
+    else:
+        # random delay to keep things happy 
+        sleep(regular())
+    
+    delay_counter -= 1
+
+
+
+
+
+
+
 
 def _header():
     return {

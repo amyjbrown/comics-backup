@@ -1,3 +1,8 @@
+body {
+    margin: 0 auto;
+    width: 800px;
+}
+
 h1, p, a.center, img.block {
     display: block;
     margin: 0 auto;

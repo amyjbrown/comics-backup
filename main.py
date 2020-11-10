@@ -8,36 +8,9 @@ import traceback
 import requests
 
 import metadata
-from getter import saveImage, getList, GetterError
+from getter import saveImage, getList, GetterError, randomDelay
 from console import INFO, ALERT, DEBUG, END
 
-
-delay_counter = 30
-def randomDelay():
-    global delay_counter
-
-    def regular():
-        """ 
-        delay between [0,2) seconds
-        """
-        return random.random() * 2
-
-    def time():
-        """
-        get beta-variate time on [30,60] seconds
-        """
-        return random.randrange(30, 61)
-
-    if delay_counter == 0:
-        ammount = time()
-        print(f"{DEBUG} * pre-emptive extra sleep for {ammount} seconds... *{END}")
-        sleep(ammount)
-        delay_counter = random.randrange(20, 40)
-    else:
-        # random delay to keep things happy 
-        sleep(regular())
-    
-    delay_counter -= 1
 
 TITLE = 125360
 # ARTICLE = 19
