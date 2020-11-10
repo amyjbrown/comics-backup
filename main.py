@@ -59,9 +59,10 @@ try:
     from socket import gaierror
     from urllib3.exceptions import MaxRetryError, NewConnectionError
     from requests.exceptions import ConnectionError
-    print(f"{INFO}Downloading article list...")
+    print(f"{INFO}Attempting to download article list...")
     LIST = getList(LISTSOURCE)
     metadata.recoverCover(LIST)
+    
 except (gaierror, MaxRetryError, NewConnectionError, ConnectionError) as err:
     print(f"{ALERT} !! Unable to make connection to acquire article list, check internet connection. Saving and exiting... !! {END}")
     print(f"{DEBUG} * Exception caught: * \n{END}")
@@ -74,15 +75,14 @@ print(f"{INFO}Successfully downloaded article list")
 
 try: 
     for page in range(CURRENTPAGE+1, CURRENTPAGE + 301): # Account for smackjeeves page ranges [1..n] 
-        tries = 5
+        tries = 4 # to account for off by one, as at tries=0 error checking will still run
         randomDelay()
         progress = (0 if CURRENTPAGE == 0 
             else int(page / FINALPAGE * 100)
         )
-        print(f"{INFO}Attemping to downloading page #{page}/#{FINALPAGE} ({progress}%)...{END}")
+        print(f"{INFO}Attemping to downloada page #{page}/#{FINALPAGE} ({progress}%)...{END}")
 
         while True:
-
             try:
                 page_title = saveImage(TITLE, page)
                 # It'll display it's own success string here
@@ -94,12 +94,6 @@ try:
                 )
                 break
 
-
-            # except requests.exceptions.HTTPError as err:
-            #     print(f"{ALERT} !! Error occured: {err}. Saving and exiting... !! {END}")
-            #     metadata.backupData()
-            #     exit(1)
-
             # this should catch both any requests.raiseforstatus(), connection/timeout errors
             # maybe should handle response errors uniquely?
             # e.g. timeout/connection errors
@@ -107,27 +101,31 @@ try:
                 print(f"{DEBUG} * Runtime error occured, presuming server timeout * {END}")
                 print(f"{DEBUG} * Exception info: {type(err)}:*{END}")
                 print(f"{DEBUG}", err, "{END}")
-                # attempt to wait between 3 and 10 minutes
+
+                # attempt to wait between 1 and 3 minutes
                 time = random.randrange(60, 180)
                 print(f"{DEBUG} * iniating cooldown for {time // 60}:{time % 60}... * {END}")
                 sleep(time)
-                print(f"{INFO}Cooldown finished, attempting to redownload page #{page}({5 - tries + 1}/5){END}")
+
+                print(f"{INFO}Cooldown finished, attempting to redownload page #{page}(try {5 - tries + 1}/5){END}")
                 if tries >= 0:
                     tries -= 1
                     continue 
+
                 else:
                     print(f"{ALERT} !! couldn't make connection and download page #{page} after 5 attempts, saving and exiting... !! {END}")
                     metadata.backupData()
                     exit(1)
+
 # Catch Control-C
 except KeyboardInterrupt:
     metadata.backupData()
     print(f"{ALERT} !! Keybord Interupt. Saving and exiting... !! {END}")
     exit(0)
-# manage any other exception, actually turned out to be necessary
+# reraises exception caused by calling exit() to work
 except SystemExit as err:
     metadata.backupData() # just in case!
-    raise # will this work??
+    raise 
 except:
     metadata.backupData()
     print(f"{ALERT} !! Caught unexpected exception, saving and exiting... !! {END}")
@@ -138,6 +136,6 @@ except:
     )
     exit(1)
 
-
+# I could maybe make this more organic with a _finally_ 
 # if the program exists successfuly, also save metadata
 metadata.backupData()
