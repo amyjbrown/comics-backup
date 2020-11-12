@@ -11,6 +11,7 @@ from fake_useragent import UserAgent
 import json
 import writer
 import random
+from time import sleep
 TIMEOUT = 60 # 1 minute timeout
 _ua = UserAgent(fallback="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0")
 
