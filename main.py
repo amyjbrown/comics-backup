@@ -47,7 +47,7 @@ except (gaierror, MaxRetryError, NewConnectionError, ConnectionError) as err:
 print(f"{INFO}Successfully downloaded article list")
 
 try: 
-    for page in range(CURRENTPAGE+1, CURRENTPAGE + 301): # Account for smackjeeves page ranges [1..n] 
+    for page in range(CURRENTPAGE + 1, FINALPAGE + 1): # Account for smackjeeves page ranges [1..n] 
         tries = 4 # to account for off by one, as at tries=0 error checking will still run
         randomDelay()
         progress = (0 if CURRENTPAGE == 0 
