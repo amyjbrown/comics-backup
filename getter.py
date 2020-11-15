@@ -97,11 +97,11 @@ def saveImage(title: int, article: int) -> str:
     image_req.raise_for_status()
     image_body = image_req.content # get binary data, as opposed to req.text
 
-    with open(f"pages/wildflowers-{article}.png", "wb+") as f:
+    with open(f"pages/comic-{article}.png", "wb+") as f:
         f.write(image_body)
         f.close()
     print(f"{INFO}Saved page #{article} -- \'{title}\'", 
-            f"[wildflowers-{article}.png]{END}"
+            f"[comic-{article}.png]{END}"
     )
     # now for bonus information, we return the title
     return title
